@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PGFindr</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&family=Open+Sans&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header>
+    <nav>
+      <div class="logo">
+        <img src="assets/logo.png" alt="Company Logo" class="logo-img" />
+        <span class="logo-text">PG<span>Findr</span></span>
+      </div>
+      <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#pgs">PGs</a></li>
+        <li><button id="darkModeToggle">🌓</button></li>
+        <li><button onclick="openLogin()">Owner Login</button></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1>Find Your Perfect PG with <span class="highlight">PGFindr</span></h1>
+    <input type="text" id="searchInput" list="cityList" placeholder="Enter city" />
+    <datalist id="cityList"></datalist>
+    <select id="amenityFilter">
+      <option value="">--Amenity--</option>
+      <option value="WiFi">WiFi</option>
+      <option value="AC">AC</option>
+      <option value="Laundry">Laundry</option>
+      <option value="Food">Food</option>
+      <option value="personal bathroom">Personal Bathroom</option>
+    </select>
+    <input type="number" id="rentFilter" placeholder="Max Rent (₹)" />
+    <select id="sortFilter">
+      <option value="">--Sort By--</option>
+      <option value="low">Price: Low to High</option>
+      <option value="high">Price: High to Low</option>
+    </select>
+    <label><input type="checkbox" id="availableOnly"> Available only</label>
+    <button onclick="searchPGs()">Search</button>
+  </section>
+
+  <section id="pgs" class="pg-list"></section>
+  <div id="loadMoreContainer">
+    <button id="loadMoreBtn" onclick="loadMore()">Load More</button>
+  </div>
+
+  <section id="map" class="map-placeholder">
+    <h2>📍 PG Locations Map (Coming Soon)</h2>
+    <p>Map integration will help you explore nearby PGs more visually.</p>
+  </section>
+
+  <section class="testimonials">
+    <h2>What Our Users Say</h2>
+    <blockquote>“PGFindr helped me find the best place in 5 minutes!” – Riya S.</blockquote>
+    <blockquote>“Clean UI, helpful filters, and reliable info.” – Aman G.</blockquote>
+  </section>
+
+  <div id="pgModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
+  <div id="loginModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeLogin()">&times;</span>
+      <h2>Owner Login</h2>
+      <input type="text" id="ownerUsername" placeholder="Username" />
+      <input type="password" id="ownerPassword" placeholder="Password" />
+      <p id="loginMsg" class="error"></p>
+      <button onclick="submitLogin()">Login</button>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 PGFindr. All rights reserved.</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
