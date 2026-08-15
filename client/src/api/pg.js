@@ -36,3 +36,7 @@ export function getPGs(params) {
 export function getPGById(id) {
   return api.get(`/pgs/${id}`);
 }
+
+export const CITY_SUGGESTIONS = [
+  "Jorhat", "Guwahati", "Dibrugarh", "Bangalore", "Delhi", "Mumbai", "Pune", "Hyderabad",
+];
