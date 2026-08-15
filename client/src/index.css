@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+@theme {
+  --font-heading: "Poppins", sans-serif;
+  --font-body: "Open Sans", sans-serif;
+
+  --color-brand-green: #4caf50;
+  --color-brand-blue: #2196f3;
+}
+
+body {
+  font-family: var(--font-body);
+}
+
+h1, h2, h3, .font-heading {
+  font-family: var(--font-heading);
+}
