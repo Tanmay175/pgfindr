@@ -41,7 +41,7 @@ This is being built out in phases. Current progress:
 - [x] Phase 3 — PG listing model + owner management
 - [x] Phase 4 — Student search & filters
 - [x] Phase 5 — Availability & booking system
-- [ ] Phase 6 — Owner booking management
+- [x] Phase 6 — Owner booking management
 - [ ] Phase 7 — Favorites, reviews & ratings
 - [ ] Phase 8 — Dashboards, notifications, UI polish
 - [ ] Phase 9 — Security hardening, validation, testing
