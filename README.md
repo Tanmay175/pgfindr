@@ -43,5 +43,5 @@ This is being built out in phases. Current progress:
 - [x] Phase 5 — Availability & booking system
 - [x] Phase 6 — Owner booking management
 - [x] Phase 7 — Favorites, reviews & ratings
-- [ ] Phase 8 — Dashboards, notifications, UI polish
+- [x] Phase 8 — Dashboards, notifications, UI polish
 - [ ] Phase 9 — Security hardening, validation, testing

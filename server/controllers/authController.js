@@ -85,10 +85,26 @@ async function getMe(req, res, next) {
   }
 }
 
+// PUT /api/auth/me (any authenticated user)
+async function updateProfile(req, res, next) {
+  try {
+    const allowedFields = ["name", "phone", "college", "course", "year", "gender", "preferredLocation", "budget"];
+    const updates = {};
+    allowedFields.forEach((f) => {
+      if (req.body[f] !== undefined) updates[f] = req.body[f];
+    });
+
+    const user = await User.findByIdAndUpdate(req.user._id, updates, { new: true, runValidators: true });
+    res.status(200).json({ success: true, message: "Profile updated successfully", user: sanitizeUser(user) });
+  } catch (err) {
+    next(err);
+  }
+}
+
 function sanitizeUser(user) {
   const obj = user.toObject ? user.toObject() : user;
   delete obj.password;
   return obj;
 }
 
-module.exports = { register, login, logout, getMe };
+module.exports = { register, login, logout, getMe, updateProfile };

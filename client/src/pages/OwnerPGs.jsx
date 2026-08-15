@@ -79,6 +79,7 @@ export default function OwnerPGs() {
                 </div>
                 <div className="flex flex-col gap-2 text-sm">
                   <Link to={`/pgs/${pg._id}`} className="text-brand-blue">View</Link>
+                  <Link to={`/owner/pgs/${pg._id}/edit`} className="text-gray-600">Edit</Link>
                   <button onClick={() => handleDelete(pg._id, pg.name)} className="text-red-500 text-left">
                     Delete
                   </button>

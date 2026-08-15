@@ -18,6 +18,7 @@ import MyBookings from "./pages/MyBookings";
 import OwnerDashboard from "./pages/OwnerDashboard";
 import OwnerPGs from "./pages/OwnerPGs";
 import AddPG from "./pages/AddPG";
+import EditPG from "./pages/EditPG";
 import BookingRequests from "./pages/BookingRequests";
 
 export default function App() {
@@ -41,6 +42,7 @@ export default function App() {
         <Route path="/owner/dashboard" element={<ProtectedRoute role="owner"><OwnerDashboard /></ProtectedRoute>} />
         <Route path="/owner/pgs" element={<ProtectedRoute role="owner"><OwnerPGs /></ProtectedRoute>} />
         <Route path="/owner/pgs/new" element={<ProtectedRoute role="owner"><AddPG /></ProtectedRoute>} />
+        <Route path="/owner/pgs/:id/edit" element={<ProtectedRoute role="owner"><EditPG /></ProtectedRoute>} />
         <Route path="/owner/bookings" element={<ProtectedRoute role="owner"><BookingRequests /></ProtectedRoute>} />
       </Routes>
     </AuthProvider>

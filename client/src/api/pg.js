@@ -17,6 +17,18 @@ export function createPG(formData) {
   return api.post("/pgs", formData, { headers: { "Content-Type": "multipart/form-data" } });
 }
 
+export function updatePG(id, formData) {
+  return api.put(`/pgs/${id}`, formData, { headers: { "Content-Type": "multipart/form-data" } });
+}
+
+export function deletePGImage(pgId, imageId) {
+  return api.delete(`/pgs/${pgId}/images/${imageId}`);
+}
+
+export function setCoverImage(pgId, imageId) {
+  return api.put(`/pgs/${pgId}/images/${imageId}/cover`);
+}
+
 export function getOwnerPGs() {
   return api.get("/owner/pgs");
 }
