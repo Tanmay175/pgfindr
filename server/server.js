@@ -9,6 +9,8 @@ const authRoutes = require("./routes/authRoutes");
 const pgRoutes = require("./routes/pgRoutes");
 const ownerRoutes = require("./routes/ownerRoutes");
 const bookingRoutes = require("./routes/bookingRoutes");
+const reviewRoutes = require("./routes/reviewRoutes");
+const favoriteRoutes = require("./routes/favoriteRoutes");
 
 const app = express();
 
@@ -31,8 +33,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/pgs", pgRoutes);
 app.use("/api/owner", ownerRoutes);
 app.use("/api/bookings", bookingRoutes);
-// Phase 7+: app.use("/api/reviews", reviewRoutes);
-// Phase 7+: app.use("/api/favorites", favoriteRoutes);
+app.use("/api/reviews", reviewRoutes);
+app.use("/api/favorites", favoriteRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

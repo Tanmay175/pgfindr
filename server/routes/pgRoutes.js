@@ -9,11 +9,13 @@ const {
   deletePGImage,
   setCoverImage,
 } = require("../controllers/pgController");
+const { getPGReviews } = require("../controllers/reviewController");
 const { protect, requireOwner } = require("../middleware/auth");
 const upload = require("../middleware/upload");
 
 router.get("/", getPGs);
 router.get("/:id", getPGById);
+router.get("/:id/reviews", getPGReviews);
 
 router.post("/", protect, requireOwner, upload.array("images", 10), createPG);
 router.put("/:id", protect, requireOwner, upload.array("images", 10), updatePG);

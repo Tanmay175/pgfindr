@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import { getPGById } from "../api/pg";
 import { useAuth } from "../context/AuthContext";
 import BookingModal from "../components/BookingModal";
+import { addFavorite, removeFavorite, getFavorites, getPGReviews } from "../api/favoriteReview";
 
 const ROOM_LABELS = { single: "Single Room", double: "Double Sharing", triple: "Triple Sharing", four_sharing: "4 Sharing" };
 
@@ -14,6 +15,9 @@ export default function PGDetails() {
   const [loading, setLoading] = useState(true);
   const [activeImage, setActiveImage] = useState(0);
   const [showBookingModal, setShowBookingModal] = useState(false);
+  const [isFavorited, setIsFavorited] = useState(false);
+  const [favLoading, setFavLoading] = useState(false);
+  const [reviews, setReviews] = useState([]);
 
   useEffect(() => {
     load();
@@ -22,12 +26,45 @@ export default function PGDetails() {
   async function load() {
     setLoading(true);
     try {
-      const { data } = await getPGById(id);
-      setPg(data.pg);
+      const [{ data: pgData }, { data: reviewData }] = await Promise.all([
+        getPGById(id),
+        getPGReviews(id),
+      ]);
+      setPg(pgData.pg);
+      setReviews(reviewData.reviews);
+
+      if (user?.role === "student") {
+        try {
+          const { data: favData } = await getFavorites();
+          setIsFavorited(favData.pgs.some((p) => p._id === id));
+        } catch {
+          // non-fatal, favorites just won't show as saved
+        }
+      }
     } catch {
       toast.error("Could not load this PG");
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function toggleFavorite() {
+    if (!user) return;
+    setFavLoading(true);
+    try {
+      if (isFavorited) {
+        await removeFavorite(id);
+        setIsFavorited(false);
+        toast.success("Removed from favorites");
+      } else {
+        await addFavorite(id);
+        setIsFavorited(true);
+        toast.success("Added to favorites");
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to update favorites");
+    } finally {
+      setFavLoading(false);
     }
   }
 
@@ -121,6 +158,27 @@ export default function PGDetails() {
               {pg.rules.otherRules && <li>{pg.rules.otherRules}</li>}
             </ul>
           </section>
+          <section>
+            <h2 className="font-heading font-semibold text-lg mb-3">
+              Reviews {pg.rating?.count > 0 && `(${pg.rating.count})`}
+            </h2>
+            {reviews.length === 0 ? (
+              <p className="text-sm text-gray-500">No reviews yet.</p>
+            ) : (
+              <div className="space-y-3">
+                {reviews.map((r) => (
+                  <div key={r._id} className="bg-white shadow-sm rounded-lg p-3">
+                    <div className="flex items-center justify-between">
+                      <p className="font-medium text-sm">{r.student?.name || "Student"}</p>
+                      <span className="text-amber-600 text-sm">{"★".repeat(r.rating)}{"☆".repeat(5 - r.rating)}</span>
+                    </div>
+                    {r.review && <p className="text-sm text-gray-600 mt-1">{r.review}</p>}
+                    <p className="text-xs text-gray-400 mt-1">{new Date(r.createdAt).toLocaleDateString()}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
         </div>
 
         {/* Sidebar */}
@@ -144,12 +202,17 @@ export default function PGDetails() {
               </Link>
             ) : null}
 
-            <button
-              onClick={() => toast("Favorites are coming in a later phase!")}
-              className="w-full border py-2.5 rounded-md mt-2 text-sm font-medium"
-            >
-              Save PG
-            </button>
+            {user?.role === "student" && (
+              <button
+                onClick={toggleFavorite}
+                disabled={favLoading}
+                className={`w-full py-2.5 rounded-md mt-2 text-sm font-medium disabled:opacity-60 ${
+                  isFavorited ? "bg-red-50 text-red-600 border border-red-200" : "border"
+                }`}
+              >
+                {isFavorited ? "♥ Saved" : "♡ Save PG"}
+              </button>
+            )}
           </div>
         </div>
       </div>
