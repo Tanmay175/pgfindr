@@ -8,6 +8,7 @@ const { notFound, errorHandler } = require("./middleware/errorHandler");
 const authRoutes = require("./routes/authRoutes");
 const pgRoutes = require("./routes/pgRoutes");
 const ownerRoutes = require("./routes/ownerRoutes");
+const bookingRoutes = require("./routes/bookingRoutes");
 
 const app = express();
 
@@ -29,7 +30,7 @@ app.get("/api/health", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/pgs", pgRoutes);
 app.use("/api/owner", ownerRoutes);
-// Phase 5+: app.use("/api/bookings", bookingRoutes);
+app.use("/api/bookings", bookingRoutes);
 // Phase 7+: app.use("/api/reviews", reviewRoutes);
 // Phase 7+: app.use("/api/favorites", favoriteRoutes);
 

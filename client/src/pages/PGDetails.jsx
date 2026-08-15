@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import { getPGById } from "../api/pg";
 import { useAuth } from "../context/AuthContext";
+import BookingModal from "../components/BookingModal";
 
 const ROOM_LABELS = { single: "Single Room", double: "Double Sharing", triple: "Triple Sharing", four_sharing: "4 Sharing" };
 
@@ -12,6 +13,7 @@ export default function PGDetails() {
   const [pg, setPg] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeImage, setActiveImage] = useState(0);
+  const [showBookingModal, setShowBookingModal] = useState(false);
 
   useEffect(() => {
     load();
@@ -130,8 +132,9 @@ export default function PGDetails() {
 
             {user?.role === "student" ? (
               <button
-                onClick={() => toast("Booking requests are coming in the next phase!")}
-                className="w-full bg-brand-green text-white py-2.5 rounded-md mt-4 text-sm font-medium"
+                onClick={() => (totalAvailable > 0 ? setShowBookingModal(true) : toast.error("This PG is fully booked right now"))}
+                className="w-full bg-brand-green text-white py-2.5 rounded-md mt-4 text-sm font-medium disabled:opacity-50"
+                disabled={totalAvailable === 0}
               >
                 Request Booking
               </button>
@@ -150,6 +153,10 @@ export default function PGDetails() {
           </div>
         </div>
       </div>
+
+      {showBookingModal && (
+        <BookingModal pg={pg} onClose={() => setShowBookingModal(false)} />
+      )}
     </div>
   );
 }
