@@ -1,9 +1,12 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
+const helmet = require("helmet");
+const mongoSanitize = require("express-mongo-sanitize");
 const cookieParser = require("cookie-parser");
 const connectDB = require("./config/db");
 const { notFound, errorHandler } = require("./middleware/errorHandler");
+const { apiLimiter } = require("./middleware/rateLimiter");
 
 const authRoutes = require("./routes/authRoutes");
 const pgRoutes = require("./routes/pgRoutes");
@@ -16,14 +19,17 @@ const app = express();
 
 connectDB();
 
-app.use(express.json());
+app.use(helmet());
+app.use(express.json({ limit: "1mb" }));
 app.use(cookieParser());
+app.use(mongoSanitize()); // strips $ and . keys from body/query/params to block operator injection
 app.use(
   cors({
     origin: process.env.CLIENT_URL || "http://localhost:5173",
     credentials: true,
   })
 );
+app.use("/api", apiLimiter);
 
 app.get("/api/health", (req, res) => {
   res.json({ success: true, message: "PGFindr API is running" });

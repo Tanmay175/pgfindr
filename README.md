@@ -44,4 +44,16 @@ This is being built out in phases. Current progress:
 - [x] Phase 6 — Owner booking management
 - [x] Phase 7 — Favorites, reviews & ratings
 - [x] Phase 8 — Dashboards, notifications, UI polish
-- [ ] Phase 9 — Security hardening, validation, testing
+- [x] Phase 9 — Security hardening, validation, testing
+
+## Security notes
+
+- Passwords hashed with bcrypt, never stored or returned in plain text
+- JWT auth via HTTP-only cookies (not accessible to client-side JS)
+- Role-based middleware (`requireStudent` / `requireOwner`) plus explicit ownership checks on every write endpoint
+- Rate limiting: 20 req/15min on auth endpoints, 300 req/15min general API
+- `express-mongo-sanitize` strips `$`/`.` keys from input to block NoSQL operator injection
+- Search input is regex-escaped before use in MongoDB queries
+- `helmet` for standard security headers
+- File uploads: type-restricted (JPG/PNG/WEBP) and size-capped (5MB) before ever reaching Cloudinary
+- See `TESTING.md` for the full manual test checklist, including the role/ownership boundary tests from the original spec

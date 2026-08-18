@@ -3,6 +3,12 @@ const { uploadBufferToCloudinary, deleteFromCloudinary } = require("../utils/upl
 
 const ROOM_TYPES = ["single", "double", "triple", "four_sharing"];
 
+// Escapes regex metacharacters so user search input can't build an
+// unintended (or maliciously expensive/ReDoS-prone) regex pattern.
+function escapeRegex(str) {
+  return String(str).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
 function parseIfString(val) {
   if (typeof val === "string") {
     try {
@@ -93,19 +99,22 @@ async function getPGs(req, res, next) {
 
     const filter = { status: "active" };
 
-    if (search) {
+    if (search && typeof search === "string") {
+      const safe = escapeRegex(search.slice(0, 100));
       filter.$or = [
-        { name: { $regex: search, $options: "i" } },
-        { "location.city": { $regex: search, $options: "i" } },
-        { "location.nearbyCollege": { $regex: search, $options: "i" } },
+        { name: { $regex: safe, $options: "i" } },
+        { "location.city": { $regex: safe, $options: "i" } },
+        { "location.nearbyCollege": { $regex: safe, $options: "i" } },
       ];
     }
-    if (city) filter["location.city"] = { $regex: `^${city}$`, $options: "i" };
-    if (gender) filter.gender = gender;
-    if (minRating) filter["rating.average"] = { $gte: Number(minRating) };
-    if (roomType) filter["rooms.type"] = roomType;
+    if (city && typeof city === "string") filter["location.city"] = { $regex: `^${escapeRegex(city.slice(0, 100))}$`, $options: "i" };
+    if (gender && ["male", "female", "any"].includes(gender)) filter.gender = gender;
+    if (minRating && !isNaN(Number(minRating))) filter["rating.average"] = { $gte: Number(minRating) };
+    if (roomType && ROOM_TYPES.includes(roomType)) filter["rooms.type"] = roomType;
 
-    const amenityList = amenities ? (Array.isArray(amenities) ? amenities : amenities.split(",")) : [];
+    const amenityList = amenities
+      ? (Array.isArray(amenities) ? amenities : String(amenities).split(",")).filter((a) => typeof a === "string").slice(0, 20)
+      : [];
     if (food === "true") amenityList.push("Food");
     if (ac === "true") amenityList.push("AC");
     if (parking === "true") amenityList.push("Parking");
@@ -113,11 +122,10 @@ async function getPGs(req, res, next) {
 
     if (availableOnly === "true") filter["rooms.availableRooms"] = { $gt: 0 };
 
-    if (minPrice || maxPrice) {
-      filter.rooms = filter.rooms || {};
+    if ((minPrice && !isNaN(Number(minPrice))) || (maxPrice && !isNaN(Number(maxPrice)))) {
       const priceMatch = {};
-      if (minPrice) priceMatch.$gte = Number(minPrice);
-      if (maxPrice) priceMatch.$lte = Number(maxPrice);
+      if (minPrice && !isNaN(Number(minPrice))) priceMatch.$gte = Number(minPrice);
+      if (maxPrice && !isNaN(Number(maxPrice))) priceMatch.$lte = Number(maxPrice);
       filter["rooms.price"] = priceMatch;
     }
 
