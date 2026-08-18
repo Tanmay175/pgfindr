@@ -1,4 +1,4 @@
-# PGFindr
+# PGFindrrr
 
 A full-stack PG (Paying Guest) accommodation discovery and booking platform.
 
